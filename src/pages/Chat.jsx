@@ -17,6 +17,9 @@ export default function Chat() {
   const [typing, setTyping]           = useState(null);
   const [loadingMsgs, setLoadingMsgs] = useState(false);
 
+  // Mobile sidebar canaux
+  const [showChannelsMobile, setShowChannelsMobile] = useState(false);
+
   // Modales
   const [showNewChannel, setShowNewChannel]       = useState(false);
   const [showDeleteChannel, setShowDeleteChannel] = useState(null); // canal à supprimer
@@ -96,8 +99,14 @@ export default function Chat() {
 
   return (
     <div className="chat-layout">
+      {/* Overlay mobile pour fermer la sidebar */}
+      {showChannelsMobile && (
+        <div onClick={() => setShowChannelsMobile(false)}
+          style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:199 }} />
+      )}
+
       {/* Sidebar canaux */}
-      <div className="chat-sidebar">
+      <div className={`chat-sidebar ${showChannelsMobile ? 'mobile-visible' : ''}`}>
         <div className="chat-sidebar-title">Canaux</div>
         {channels.map(ch => (
           <div key={ch.id}
@@ -135,6 +144,14 @@ export default function Chat() {
       {/* Zone messages */}
       <div className="chat-main">
         <div className="chat-header">
+          {/* Bouton canaux — visible seulement sur mobile */}
+          <button onClick={() => setShowChannelsMobile(o => !o)}
+            className="mobile-only"
+            style={{ background:'var(--surface2)', border:'1px solid var(--border)', borderRadius:8,
+              padding:'6px 10px', cursor:'pointer', color:'var(--accent)', fontSize:12,
+              fontFamily:"'DM Sans',sans-serif", display:'none', alignItems:'center', gap:5, flexShrink:0 }}>
+            ☰ Canaux
+          </button>
           <span style={{ color: 'var(--muted)', fontSize: 18 }}>#</span>
           <span style={{ fontWeight: 600 }}>{channel?.name || '…'}</span>
           {channel?.description && <span style={{ fontSize: 12, color: 'var(--muted)', marginLeft: 8 }}>— {channel.description}</span>}

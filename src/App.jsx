@@ -1,150 +1,35 @@
 // src/App.jsx — CSE Connect avec responsive mobile
-import React, { useState, useEffect } from "react";
-import { AuthProvider, useAuth } from "./context";
-import LoginPage from "./pages/LoginPage";
-import Dashboard from "./pages/Dashboard";
-import Chat from "./pages/Chat";
-import Notes from "./pages/Notes";
-import Meetings from "./pages/Meetings";
-import Documents from "./pages/Documents";
-import Admin from "./pages/Admin";
-import Delegation from "./pages/Delegation";
-import Notifications from "./components/Notifications";
-import { saveUserTheme } from "./api";
+import React, { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from './context';
+import LoginPage from './pages/LoginPage';
+import Dashboard from './pages/Dashboard';
+import Chat from './pages/Chat';
+import Notes from './pages/Notes';
+import Meetings from './pages/Meetings';
+import Documents from './pages/Documents';
+import Admin from './pages/Admin';
+import Delegation from './pages/Delegation';
+import Notifications from './components/Notifications';
+import { saveUserTheme } from './api';
+
 
 // ─── THÈMES ───────────────────────────────────────────────────────────────────
 const THEMES = {
-  Cosmos: {
-    label: "Cosmos",
-    icon: "🌌",
-    "--bg": "#0f1117",
-    "--surface": "#181c27",
-    "--surface2": "#1f2436",
-    "--border": "#2a3050",
-    "--text": "#e8eaf6",
-    "--muted": "#7b83a8",
-    "--accent": "#4f7cff",
-    "--accent2": "#7c5cfc",
-    "--green": "#3ecf8e",
-    "--orange": "#f5a623",
-    "--red": "#f56565",
-  },
-  Forêt: {
-    label: "Forêt",
-    icon: "🌿",
-    "--bg": "#0d1410",
-    "--surface": "#131f18",
-    "--surface2": "#1a2a20",
-    "--border": "#253d2e",
-    "--text": "#e0ede5",
-    "--muted": "#6b9278",
-    "--accent": "#3ecf8e",
-    "--accent2": "#27ae73",
-    "--green": "#52d98f",
-    "--orange": "#f0a500",
-    "--red": "#e05555",
-  },
-  Océan: {
-    label: "Océan",
-    icon: "🌊",
-    "--bg": "#080e1a",
-    "--surface": "#0e1829",
-    "--surface2": "#152038",
-    "--border": "#1e3050",
-    "--text": "#d6e8f8",
-    "--muted": "#5b86a8",
-    "--accent": "#00b4d8",
-    "--accent2": "#0077b6",
-    "--green": "#3ecf8e",
-    "--orange": "#f5a623",
-    "--red": "#ef5350",
-  },
-  Soleil: {
-    label: "Soleil",
-    icon: "☀️",
-    "--bg": "#fafaf8",
-    "--surface": "#ffffff",
-    "--surface2": "#f0efe8",
-    "--border": "#e2e0d8",
-    "--text": "#1a1a2e",
-    "--muted": "#6b6b80",
-    "--accent": "#e07b00",
-    "--accent2": "#c0395f",
-    "--green": "#27ae60",
-    "--orange": "#e67e22",
-    "--red": "#e74c3c",
-  },
-  Cerise: {
-    label: "Cerise",
-    icon: "🍒",
-    "--bg": "#130a0e",
-    "--surface": "#1e1015",
-    "--surface2": "#28151c",
-    "--border": "#3d1f2a",
-    "--text": "#f5e6ea",
-    "--muted": "#9e6b78",
-    "--accent": "#e05585",
-    "--accent2": "#c0395f",
-    "--green": "#3ecf8e",
-    "--orange": "#f5a623",
-    "--red": "#f56565",
-  },
-  Ardoise: {
-    label: "Ardoise",
-    icon: "🪨",
-    "--bg": "#0e1117",
-    "--surface": "#161b22",
-    "--surface2": "#1c2128",
-    "--border": "#30363d",
-    "--text": "#c9d1d9",
-    "--muted": "#6e7681",
-    "--accent": "#58a6ff",
-    "--accent2": "#bc8cff",
-    "--green": "#3fb950",
-    "--orange": "#d29922",
-    "--red": "#f85149",
-  },
-  Améthyste: {
-    label: "Améthyste",
-    icon: "💜",
-    "--bg": "#100d1a",
-    "--surface": "#18132a",
-    "--surface2": "#211a38",
-    "--border": "#342654",
-    "--text": "#ede8f8",
-    "--muted": "#8a7aaa",
-    "--accent": "#a78bfa",
-    "--accent2": "#7c3aed",
-    "--green": "#3ecf8e",
-    "--orange": "#f59e0b",
-    "--red": "#f56565",
-  },
-  Minuit: {
-    label: "Minuit",
-    icon: "🌙",
-    "--bg": "#05070f",
-    "--surface": "#0a0d1a",
-    "--surface2": "#0f1225",
-    "--border": "#1a1f3a",
-    "--text": "#c8d0f0",
-    "--muted": "#4a5280",
-    "--accent": "#6d8fff",
-    "--accent2": "#5c4dff",
-    "--green": "#3ecf8e",
-    "--orange": "#ffb347",
-    "--red": "#ff6b6b",
-  },
+  'Cosmos':     { label:'Cosmos',     icon:'🌌', '--bg':'#0f1117', '--surface':'#181c27', '--surface2':'#1f2436', '--border':'#2a3050', '--text':'#e8eaf6', '--muted':'#7b83a8', '--accent':'#4f7cff', '--accent2':'#7c5cfc', '--green':'#3ecf8e', '--orange':'#f5a623', '--red':'#f56565' },
+  'Forêt':      { label:'Forêt',      icon:'🌿', '--bg':'#0d1410', '--surface':'#131f18', '--surface2':'#1a2a20', '--border':'#253d2e', '--text':'#e0ede5', '--muted':'#6b9278', '--accent':'#3ecf8e', '--accent2':'#27ae73', '--green':'#52d98f', '--orange':'#f0a500', '--red':'#e05555' },
+  'Océan':      { label:'Océan',      icon:'🌊', '--bg':'#080e1a', '--surface':'#0e1829', '--surface2':'#152038', '--border':'#1e3050', '--text':'#d6e8f8', '--muted':'#5b86a8', '--accent':'#00b4d8', '--accent2':'#0077b6', '--green':'#3ecf8e', '--orange':'#f5a623', '--red':'#ef5350' },
+  'Soleil':     { label:'Soleil',     icon:'☀️',  '--bg':'#fafaf8', '--surface':'#ffffff', '--surface2':'#f0efe8', '--border':'#e2e0d8', '--text':'#1a1a2e', '--muted':'#6b6b80', '--accent':'#e07b00', '--accent2':'#c0395f', '--green':'#27ae60', '--orange':'#e67e22', '--red':'#e74c3c' },
+  'Cerise':     { label:'Cerise',     icon:'🍒', '--bg':'#130a0e', '--surface':'#1e1015', '--surface2':'#28151c', '--border':'#3d1f2a', '--text':'#f5e6ea', '--muted':'#9e6b78', '--accent':'#e05585', '--accent2':'#c0395f', '--green':'#3ecf8e', '--orange':'#f5a623', '--red':'#f56565' },
+  'Ardoise':    { label:'Ardoise',    icon:'🪨', '--bg':'#0e1117', '--surface':'#161b22', '--surface2':'#1c2128', '--border':'#30363d', '--text':'#c9d1d9', '--muted':'#6e7681', '--accent':'#58a6ff', '--accent2':'#bc8cff', '--green':'#3fb950', '--orange':'#d29922', '--red':'#f85149' },
+  'Améthyste':  { label:'Améthyste', icon:'💜', '--bg':'#100d1a', '--surface':'#18132a', '--surface2':'#211a38', '--border':'#342654', '--text':'#ede8f8', '--muted':'#8a7aaa', '--accent':'#a78bfa', '--accent2':'#7c3aed', '--green':'#3ecf8e', '--orange':'#f59e0b', '--red':'#f56565' },
+  'Minuit':     { label:'Minuit',     icon:'🌙', '--bg':'#05070f', '--surface':'#0a0d1a', '--surface2':'#0f1225', '--border':'#1a1f3a', '--text':'#c8d0f0', '--muted':'#4a5280', '--accent':'#6d8fff', '--accent2':'#5c4dff', '--green':'#3ecf8e', '--orange':'#ffb347', '--red':'#ff6b6b' },
 };
 
 function useTheme(userTheme) {
   // Initialiser depuis le compte utilisateur (BDD), fallback localStorage, fallback Cosmos
   const [theme, setThemeState] = useState(() => {
     if (userTheme && THEMES[userTheme]) return userTheme;
-    try {
-      return localStorage.getItem("cse-theme") || "Cosmos";
-    } catch {
-      return "Cosmos";
-    }
+    try { return localStorage.getItem('cse-theme') || 'Cosmos'; } catch { return 'Cosmos'; }
   });
 
   // Sync si le thème du user change (ex: après login)
@@ -156,21 +41,17 @@ function useTheme(userTheme) {
 
   // Appliquer le thème au DOM
   useEffect(() => {
-    const t = THEMES[theme] || THEMES["Cosmos"];
+    const t = THEMES[theme] || THEMES['Cosmos'];
     Object.entries(t).forEach(([k, v]) => {
-      if (k.startsWith("--")) document.documentElement.style.setProperty(k, v);
+      if (k.startsWith('--')) document.documentElement.style.setProperty(k, v);
     });
-    try {
-      localStorage.setItem("cse-theme", theme);
-    } catch {}
+    try { localStorage.setItem('cse-theme', theme); } catch {}
   }, [theme]);
 
   // Sauvegarder en BDD + mettre à jour l'état local
   const setTheme = async (newTheme) => {
     setThemeState(newTheme);
-    try {
-      await saveUserTheme(newTheme);
-    } catch {}
+    try { await saveUserTheme(newTheme); } catch {}
   };
 
   return [theme, setTheme];
@@ -526,13 +407,16 @@ const css = `
     /* Chat : masquer sidebar canaux sur mobile */
     .chat-layout { height: calc(100vh - var(--nav-h)); flex-direction: column; }
     .chat-sidebar { display: none; }
+    .mobile-only { display: flex !important; }
     .chat-sidebar.mobile-visible { display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: var(--nav-h); width: 240px; z-index: 200; box-shadow: 4px 0 20px rgba(0,0,0,0.4); }
     .chat-main { height: 100%; }
     .chat-messages { padding: 12px; }
     .msg-bubble { max-width: 85%; }
+    /* Afficher bouton canaux sur mobile */
+    .mobile-only { display: flex !important; }
 
-    /* Modal : prend toute la largeur, s'ouvre depuis le bas */
-    .modal { border-radius: 20px 20px 0 0; padding: 20px 16px; max-height: 88vh; width: 100%; }
+    /* Modal : centrée sur mobile */
+    .modal { border-radius: 16px; padding: 20px 16px; max-height: 88vh; width: 92%; }
     .modal-title { font-size: 18px; }
 
     /* Boutons plus grands sur mobile (touch targets) */
@@ -549,7 +433,7 @@ const css = `
     .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .content { padding: 10px 10px calc(var(--nav-h) + 10px); }
     .mobile-nav-label { display: none; }
-    .mobile-nav-icon { width: 40px; height: 40px; font-size: 22px; }
+    .mobile-nav-icon { width: 36px; height: 36px; font-size: 20px; }
   }
 
   /* ─── TOUCH IMPROVEMENTS ────────────────────────────────────────────────── */
@@ -566,74 +450,42 @@ const css = `
 
 // ─── CONFIG PAGES ─────────────────────────────────────────────────────────────
 const PAGES = [
-  { id: "dashboard", label: "Accueil", icon: "⊞", mobileLabel: "Accueil" },
-  { id: "chat", label: "Messagerie", icon: "💬", mobileLabel: "Messages" },
-  { id: "notes", label: "Notes & Idées", icon: "📝", mobileLabel: "Notes" },
-  { id: "meetings", label: "Réunions", icon: "📅", mobileLabel: "Réunions" },
-  { id: "docs", label: "Documents", icon: "📁", mobileLabel: "Docs" },
-  {
-    id: "delegation",
-    label: "Délégation",
-    icon: "⏱",
-    mobileLabel: "Délégation",
-    extra: true,
-  },
-  {
-    id: "admin",
-    label: "Administration",
-    icon: "⚙️",
-    mobileLabel: "Admin",
-    extra: true,
-    adminOnly: true,
-  },
+  { id: 'dashboard',  label: 'Accueil',       icon: '⊞',  mobileLabel: 'Accueil' },
+  { id: 'chat',       label: 'Messagerie',     icon: '💬', mobileLabel: 'Chat' },
+  { id: 'notes',      label: 'Notes & Idées',  icon: '📝', mobileLabel: 'Notes' },
+  { id: 'meetings',   label: 'Réunions',       icon: '📅', mobileLabel: 'Réunions' },
+  { id: 'docs',       label: 'Documents',      icon: '📁', mobileLabel: 'Docs' },
+  { id: 'delegation', label: 'Délégation',     icon: '⏱',  mobileLabel: 'Délég.' },
+  { id: 'admin',      label: 'Administration', icon: '⚙️', mobileLabel: 'Admin', adminOnly: true },
 ];
 
 const PAGE_INFO = {
-  dashboard: { title: "Tableau de bord", sub: (n) => `Bienvenue, ${n} 👋` },
-  chat: { title: "Messagerie", sub: () => "Échangez avec l'équipe" },
-  notes: { title: "Notes & Idées", sub: () => "Gérez vos idées par thème" },
-  meetings: { title: "Réunions", sub: () => "Planifiez vos réunions" },
-  docs: { title: "Documents", sub: () => "Partagez vos fichiers" },
-  delegation: {
-    title: "Délégation",
-    sub: () => "Suivi des heures de délégation",
-  },
-  admin: { title: "Administration", sub: () => "Gestion des membres du CSE" },
+  dashboard:  { title: 'Tableau de bord', sub: (n) => `Bienvenue, ${n} 👋` },
+  chat:       { title: 'Messagerie',      sub: () => "Échangez avec l'équipe" },
+  notes:      { title: 'Notes & Idées',   sub: () => 'Gérez vos idées par thème' },
+  meetings:   { title: 'Réunions',        sub: () => 'Planifiez vos réunions' },
+  docs:       { title: 'Documents',       sub: () => 'Partagez vos fichiers' },
+  delegation: { title: 'Délégation',      sub: () => "Suivi des heures de délégation" },
+  admin:      { title: 'Administration',  sub: () => 'Gestion des membres du CSE' },
 };
 
 // Pages affichées dans la barre mobile principale (les 4 premières)
-const MOBILE_MAIN = ["dashboard", "chat", "notes", "meetings"];
+const MOBILE_MAIN = ['dashboard', 'chat', 'notes', 'meetings', 'docs', 'delegation'];
 
 // ─── INNER APP ────────────────────────────────────────────────────────────────
 function InnerApp() {
   const { user, logout, loading } = useAuth();
-  const [page, setPage] = useState("dashboard");
+  const [page, setPage]         = useState('dashboard');
   const [showMore, setShowMore] = useState(false);
-  const [theme, setTheme] = useTheme(user?.theme);
+  const [theme, setTheme]       = useTheme(user?.theme);
   const [showThemePicker, setShowThemePicker] = useState(false);
 
   // Hooks avant les return conditionnels ✓
 
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "var(--bg)",
-        }}
-      >
-        <div
-          style={{
-            color: "var(--muted)",
-            fontFamily: "'Fraunces', serif",
-            fontSize: 18,
-          }}
-        >
-          CSE Connect…
-        </div>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
+        <div style={{ color: 'var(--muted)', fontFamily: "'Fraunces', serif", fontSize: 18 }}>CSE Connect…</div>
       </div>
     );
   }
@@ -642,9 +494,9 @@ function InnerApp() {
 
   const info = PAGE_INFO[page] || PAGE_INFO.dashboard;
 
-  const visiblePages = PAGES.filter((p) => !p.adminOnly || user.is_admin);
-  const mobileMain = visiblePages.filter((p) => MOBILE_MAIN.includes(p.id));
-  const mobileExtra = visiblePages.filter((p) => !MOBILE_MAIN.includes(p.id));
+  const visiblePages = PAGES.filter(p => !p.adminOnly || user.is_admin);
+  const mobileMain   = visiblePages.filter(p => MOBILE_MAIN.includes(p.id));
+  const mobileExtra  = visiblePages.filter(p => !MOBILE_MAIN.includes(p.id));
 
   const navigate = (id) => {
     setPage(id);
@@ -654,80 +506,47 @@ function InnerApp() {
 
   return (
     <div className="app">
+
       {/* ── SIDEBAR DESKTOP ── */}
       <div className="sidebar">
         <div className="sidebar-brand">
-          <div className="brand-title">
-            CSE
-            <br />
-            Connect
-          </div>
+          <div className="brand-title">CSE<br/>Connect</div>
           <div className="brand-sub">Espace membres</div>
         </div>
         <nav className="nav">
-          {visiblePages.map((p) => (
-            <button
-              key={p.id}
-              className={`nav-item ${page === p.id ? "active" : ""}`}
-              onClick={() => navigate(p.id)}
-            >
+          {visiblePages.map(p => (
+            <button key={p.id} className={`nav-item ${page === p.id ? 'active' : ''}`} onClick={() => navigate(p.id)}>
               <span className="nav-icon">{p.icon}</span>
               {p.label}
             </button>
           ))}
         </nav>
-        <div
-          className="sidebar-user"
-          style={{ flexDirection: "column", alignItems: "stretch", gap: 10 }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div className="avatar">
-              {user.avatar || user.name?.slice(0, 2).toUpperCase()}
-            </div>
+        <div className="sidebar-user" style={{ flexDirection:'column', alignItems:'stretch', gap:10 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+            <div className="avatar">{user.avatar || user.name?.slice(0,2).toUpperCase()}</div>
             <div className="user-info" style={{ flex: 1, minWidth: 0 }}>
               <div className="name">{user.name}</div>
               <div className="role">
                 {user.role}
                 {user.titulaire !== undefined && (
-                  <span style={{ marginLeft: 4, opacity: 0.7 }}>
-                    · {user.titulaire ? "Titulaire" : "Suppléant"}
-                  </span>
+                  <span style={{ marginLeft: 4, opacity: 0.7 }}>· {user.titulaire ? 'Titulaire' : 'Suppléant'}</span>
                 )}
               </div>
             </div>
           </div>
           {/* Notifications + déconnexion sous le nom */}
-          <div style={{ display: "flex", gap: 6 }}>
-            <div style={{ flex: 1 }}>
+          <div style={{ display:'flex', gap:6 }}>
+            <div style={{ flex:1 }}>
               <Notifications />
             </div>
-            <button
-              onClick={logout}
-              title="Déconnexion"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                background: "none",
-                border: "1px solid var(--border)",
-                borderRadius: 8,
-                color: "var(--muted)",
-                cursor: "pointer",
-                fontSize: 12,
-                padding: "5px 10px",
-                fontFamily: "'DM Sans',sans-serif",
-                transition: "all 0.15s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "var(--red)";
-                e.currentTarget.style.borderColor = "var(--red)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "var(--muted)";
-                e.currentTarget.style.borderColor = "var(--border)";
-              }}
-            >
-              ⏻
+            <button onClick={logout} title="Déconnexion"
+              style={{ display:'flex', alignItems:'center', gap:6, background:'none',
+                border:'1px solid var(--border)', borderRadius:8, color:'var(--muted)',
+                cursor:'pointer', fontSize:12, padding:'5px 10px',
+                fontFamily:"'DM Sans',sans-serif", transition:'all 0.15s' }}
+              onMouseEnter={e => { e.currentTarget.style.color='var(--red)'; e.currentTarget.style.borderColor='var(--red)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color='var(--muted)'; e.currentTarget.style.borderColor='var(--border)'; }}>
+              ⏻ Déconnexion
             </button>
           </div>
         </div>
@@ -735,90 +554,44 @@ function InnerApp() {
 
       {/* ── MAIN ── */}
       <div className="main">
-        {page !== "chat" && (
+        {page !== 'chat' && (
           <div className="page-header">
             <div>
               <div className="page-title">{info.title}</div>
-              <div className="page-subtitle">
-                {info.sub(user.name?.split(" ")[0])}
-              </div>
+              <div className="page-subtitle">{info.sub(user.name?.split(' ')[0])}</div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
               {/* Choix du thème — uniquement sur le dashboard */}
-              {page === "dashboard" && (
-                <div style={{ position: "relative" }}>
-                  <button
-                    className="btn btn-ghost"
-                    style={{ fontSize: 12 }}
-                    onClick={() => setShowThemePicker((o) => !o)}
-                  >
+              {page === 'dashboard' && (
+                <div style={{ position:'relative' }}>
+                  <button className="btn btn-ghost" style={{ fontSize:12 }}
+                    onClick={() => setShowThemePicker(o=>!o)}>
                     Choix du thème
                   </button>
                   {showThemePicker && (
                     <>
                       {/* Overlay invisible pour fermer en cliquant dehors */}
-                      <div
-                        onClick={() => setShowThemePicker(false)}
-                        style={{ position: "fixed", inset: 0, zIndex: 199 }}
-                      />
+                      <div onClick={() => setShowThemePicker(false)}
+                        style={{ position:'fixed', inset:0, zIndex:199 }} />
                       {/* Popover */}
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "110%",
-                          right: 0,
-                          background: "var(--surface)",
-                          border: "1px solid var(--border)",
-                          borderRadius: 12,
-                          padding: "12px 14px",
-                          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
-                          zIndex: 200,
-                          animation: "slideUp 0.15s ease",
-                          minWidth: 200,
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: 10,
-                            color: "var(--muted)",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.06em",
-                            marginBottom: 10,
-                          }}
-                        >
-                          Thème de couleurs
-                        </div>
-                        <div
-                          style={{ display: "flex", flexWrap: "wrap", gap: 8 }}
-                        >
+                      <div style={{ position:'absolute', top:'110%', right:0,
+                        background:'var(--surface)', border:'1px solid var(--border)',
+                        borderRadius:12, padding:'12px 14px', boxShadow:'0 8px 32px rgba(0,0,0,0.4)',
+                        zIndex:200, animation:'slideUp 0.15s ease', minWidth:200 }}>
+                        <div style={{ fontSize:10, color:'var(--muted)', textTransform:'uppercase',
+                          letterSpacing:'0.06em', marginBottom:10 }}>Thème de couleurs</div>
+                        <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
                           {Object.entries(THEMES).map(([key, t]) => {
                             const isActive = theme === key;
                             return (
-                              <button
-                                key={key}
-                                onClick={() => {
-                                  setTheme(key);
-                                  setShowThemePicker(false);
-                                }}
+                              <button key={key}
+                                onClick={() => { setTheme(key); setShowThemePicker(false); }}
                                 title={t.label}
-                                style={{
-                                  width: 28,
-                                  height: 28,
-                                  borderRadius: "50%",
-                                  border: "none",
-                                  background: t["--accent"],
-                                  cursor: "pointer",
-                                  padding: 0,
-                                  outline: isActive
-                                    ? "2px solid var(--text)"
-                                    : "2px solid transparent",
-                                  outlineOffset: 2,
-                                  transition: "all 0.15s",
-                                  transform: isActive
-                                    ? "scale(1.2)"
-                                    : "scale(1)",
-                                }}
-                              />
+                                style={{ width:28, height:28, borderRadius:'50%', border:'none',
+                                  background: t['--accent'], cursor:'pointer', padding:0,
+                                  outline: isActive ? '2px solid var(--text)' : '2px solid transparent',
+                                  outlineOffset: 2, transition:'all 0.15s',
+                                  transform: isActive ? 'scale(1.2)' : 'scale(1)' }} />
                             );
                           })}
                         </div>
@@ -830,56 +603,31 @@ function InnerApp() {
             </div>
           </div>
         )}
-        <div
-          className={page === "chat" ? "" : "content"}
-          style={
-            page === "chat"
-              ? {
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  overflow: "hidden",
-                }
-              : {}
-          }
-        >
-          {page === "dashboard" && <Dashboard onNavigate={navigate} />}
-          {page === "chat" && <Chat />}
-          {page === "notes" && <Notes />}
-          {page === "meetings" && <Meetings />}
-          {page === "docs" && <Documents />}
-          {page === "delegation" && <Delegation />}
-          {page === "admin" && <Admin />}
+        <div className={page === 'chat' ? '' : 'content'} style={page === 'chat' ? { flex:1, display:'flex', flexDirection:'column', overflow:'hidden' } : {}}>
+          {page === 'dashboard'  && <Dashboard onNavigate={navigate} />}
+          {page === 'chat'       && <Chat />}
+          {page === 'notes'      && <Notes />}
+          {page === 'meetings'   && <Meetings />}
+          {page === 'docs'       && <Documents />}
+          {page === 'delegation' && <Delegation />}
+          {page === 'admin'      && <Admin />}
         </div>
       </div>
 
       {/* ── OVERLAY pour fermer le menu "Plus" ── */}
-      <div
-        className={`mobile-overlay ${showMore ? "visible" : ""}`}
-        onClick={() => setShowMore(false)}
-      />
+      <div className={`mobile-overlay ${showMore ? 'visible' : ''}`} onClick={() => setShowMore(false)} />
 
       {/* ── PANEL "Plus" ── */}
       {showMore && (
         <div className="mobile-more-panel">
-          {mobileExtra.map((p) => (
-            <button
-              key={p.id}
-              className={`mobile-more-item ${page === p.id ? "active" : ""}`}
-              onClick={() => navigate(p.id)}
-            >
+          {mobileExtra.map(p => (
+            <button key={p.id} className={`mobile-more-item ${page === p.id ? 'active' : ''}`} onClick={() => navigate(p.id)}>
               <span className="icon">{p.icon}</span>
               {p.mobileLabel}
             </button>
           ))}
           {/* Thème */}
-          <button
-            className="mobile-more-item"
-            onClick={() => {
-              setShowMore(false);
-              setShowThemePicker((o) => !o);
-            }}
-          >
+          <button className="mobile-more-item" onClick={() => { setShowMore(false); setShowThemePicker(o=>!o); }}>
             <span className="icon">{THEMES[theme]?.icon}</span>
             Thème
           </button>
@@ -893,90 +641,31 @@ function InnerApp() {
 
       {/* ── Picker thème mobile (overlay) ── */}
       {showThemePicker && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 300,
-            background: "rgba(0,0,0,0.6)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "center",
-          }}
-          onClick={() => setShowThemePicker(false)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: "100%",
-              maxWidth: 480,
-              background: "var(--surface)",
-              borderRadius: "20px 20px 0 0",
-              padding: "16px",
-              paddingBottom: "calc(16px + env(safe-area-inset-bottom))",
-              animation: "slideUp 0.2s ease",
-            }}
-          >
-            <div
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                marginBottom: 14,
-                color: "var(--muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                textAlign: "center",
-              }}
-            >
+        <div style={{ position:'fixed', inset:0, zIndex:300, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(4px)',
+          display:'flex', alignItems:'flex-end', justifyContent:'center' }}
+          onClick={() => setShowThemePicker(false)}>
+          <div onClick={e=>e.stopPropagation()}
+            style={{ width:'100%', maxWidth:480, background:'var(--surface)', borderRadius:'20px 20px 0 0',
+              padding:'16px', paddingBottom:'calc(16px + env(safe-area-inset-bottom))',
+              animation:'slideUp 0.2s ease' }}>
+            <div style={{ fontSize:13, fontWeight:600, marginBottom:14, color:'var(--muted)',
+              textTransform:'uppercase', letterSpacing:'0.06em', textAlign:'center' }}>
               Choisir un thème
             </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 8,
-              }}
-            >
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
               {Object.entries(THEMES).map(([key, t]) => (
-                <button
-                  key={key}
-                  onClick={() => {
-                    setTheme(key);
-                    setShowThemePicker(false);
-                  }}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    padding: "12px 14px",
-                    background:
-                      theme === key ? "var(--surface2)" : "transparent",
-                    border: `1px solid ${theme === key ? "var(--accent)" : "var(--border)"}`,
-                    borderRadius: 10,
-                    cursor: "pointer",
-                    color: theme === key ? "var(--accent)" : "var(--text)",
-                    fontSize: 13,
-                    fontFamily: "'DM Sans',sans-serif",
-                    fontWeight: theme === key ? 600 : 400,
-                  }}
-                >
-                  <span style={{ fontSize: 20 }}>{t.icon}</span>
-                  <span style={{ flex: 1, textAlign: "left" }}>{t.label}</span>
-                  <div style={{ display: "flex", gap: 3 }}>
-                    {[t["--accent"], t["--accent2"], t["--green"]].map(
-                      (col, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            background: col,
-                          }}
-                        />
-                      ),
-                    )}
+                <button key={key} onClick={() => { setTheme(key); setShowThemePicker(false); }}
+                  style={{ display:'flex', alignItems:'center', gap:10, padding:'12px 14px',
+                    background: theme===key ? 'var(--surface2)' : 'transparent',
+                    border:`1px solid ${theme===key?'var(--accent)':'var(--border)'}`,
+                    borderRadius:10, cursor:'pointer', color: theme===key?'var(--accent)':'var(--text)',
+                    fontSize:13, fontFamily:"'DM Sans',sans-serif", fontWeight:theme===key?600:400 }}>
+                  <span style={{ fontSize:20 }}>{t.icon}</span>
+                  <span style={{ flex:1, textAlign:'left' }}>{t.label}</span>
+                  <div style={{ display:'flex', gap:3 }}>
+                    {[t['--accent'], t['--accent2'], t['--green']].map((col,i) => (
+                      <div key={i} style={{ width:8, height:8, borderRadius:'50%', background:col }} />
+                    ))}
                   </div>
                 </button>
               ))}
@@ -988,28 +677,26 @@ function InnerApp() {
       {/* ── NAV BAS MOBILE ── */}
       <nav className="mobile-nav">
         <div className="mobile-nav-inner">
-          {mobileMain.map((p) => (
-            <button
-              key={p.id}
-              className={`mobile-nav-item ${page === p.id ? "active" : ""}`}
-              onClick={() => navigate(p.id)}
-            >
+          {mobileMain.map(p => (
+            <button key={p.id} className={`mobile-nav-item ${page === p.id ? 'active' : ''}`} onClick={() => navigate(p.id)}>
               <div className="mobile-nav-icon">{p.icon}</div>
               <span className="mobile-nav-label">{p.mobileLabel}</span>
             </button>
           ))}
+          {/* Notifications */}
+          <div className="mobile-nav-item" style={{ position:'relative' }}>
+            <Notifications mobile />
+          </div>
           {/* Bouton "Plus" */}
-          <button
-            className={`mobile-nav-item ${showMore ? "active" : ""}`}
-            onClick={() => setShowMore((o) => !o)}
-          >
-            <div className="mobile-nav-icon" style={{ fontSize: 22 }}>
-              {showMore ? "✕" : "···"}
+          <button className={`mobile-nav-item ${showMore ? 'active' : ''}`} onClick={() => setShowMore(o => !o)}>
+            <div className="mobile-nav-icon" style={{ fontSize:22 }}>
+              {showMore ? '✕' : '···'}
             </div>
             <span className="mobile-nav-label">Plus</span>
           </button>
         </div>
       </nav>
+
     </div>
   );
 }

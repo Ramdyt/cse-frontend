@@ -38,9 +38,11 @@ export default function Meetings() {
   const [loading, setLoading]       = useState(true);
   const [showModal, setShowModal]   = useState(false);
   const [showDelete, setShowDelete] = useState(null);
+  const [showEdit, setShowEdit]     = useState(null); // réunion à modifier
+  const [editForm, setEditForm]     = useState({});
   const [saving, setSaving]         = useState(false);
   const [attSaving, setAttSaving]   = useState({});
-  const [form, setForm] = useState({ title:'', date:'', time:'14:00', location:'', agenda:'' });
+  const [form, setForm] = useState({ title:'', date:'', time:'14:00', location:'', locationChoice:'', agenda:'' });
 
   // Modal absent → remplaçant
   const [showReplace, setShowReplace]         = useState(null); // id réunion concernée
@@ -87,7 +89,7 @@ export default function Meetings() {
       const data = { ...form, agenda: form.agenda.split('\n').filter(Boolean) };
       await createMeeting(data);
       setShowModal(false);
-      setForm({ title:'', date:'', time:'14:00', location:'', agenda:'' });
+      setForm({ title:'', date:'', time:'14:00', location:'', locationChoice:'', agenda:'' });
       await load();
     } finally { setSaving(false); }
   };
@@ -129,7 +131,8 @@ export default function Meetings() {
               suppleants={suppleants}
               showReplace={showReplace} replaceTarget={replaceTarget}
               setReplaceTarget={setReplaceTarget} confirmAbsent={confirmAbsent}
-              onDelete={() => setShowDelete(m)} />
+              onDelete={() => setShowDelete(m)}
+              onEdit={() => { setEditForm({ title:m.title, date:m.date, time:m.time, location:m.location, agenda:(m.agenda||[]).map(a=>a.content).join('\n') }); setShowEdit(m); }} />
             )}
           </div>
         </div>
@@ -183,8 +186,21 @@ export default function Meetings() {
               </div>
               <div className="form-group">
                 <label className="form-label">Lieu</label>
-                <input className="form-input" value={form.location}
-                  onChange={e=>setForm(f=>({...f,location:e.target.value}))} placeholder="Salle, Teams…" />
+                <select className="form-select" value={form.locationChoice || ''}
+                  onChange={e => {
+                    const v = e.target.value;
+                    setForm(f => ({ ...f, locationChoice: v, location: v === 'autre' ? '' : v }));
+                  }}>
+                  <option value="">— Choisir —</option>
+                  <option value="Grande salle de réunion">Grande salle de réunion</option>
+                  <option value="Petite salle de réunion">Petite salle de réunion</option>
+                  <option value="autre">Autre…</option>
+                </select>
+                {form.locationChoice === 'autre' && (
+                  <input className="form-input" style={{ marginTop:6 }} value={form.location}
+                    onChange={e=>setForm(f=>({...f,location:e.target.value}))}
+                    placeholder="Préciser le lieu…" autoFocus />
+                )}
               </div>
             </div>
             <div className="form-group">
@@ -219,6 +235,130 @@ export default function Meetings() {
                 style={{ background:'var(--red)', color:'#fff', border:'none', padding:'8px 16px', borderRadius:8, cursor:'pointer', fontSize:13, fontFamily:"'DM Sans',sans-serif", fontWeight:500 }}>
                 Supprimer définitivement
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL : Modifier une réunion ── */}
+      {showEdit && (
+        <div className="modal-overlay">
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div className="modal-title">Modifier la réunion</div>
+            <div className="form-group">
+              <label className="form-label">Titre *</label>
+              <input className="form-input" autoFocus value={editForm.title}
+                onChange={e=>setEditForm(f=>({...f,title:e.target.value}))} />
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div className="form-group">
+                <label className="form-label">Date *</label>
+                <input className="form-input" type="date" value={editForm.date}
+                  onChange={e=>setEditForm(f=>({...f,date:e.target.value}))} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Heure *</label>
+                <input className="form-input" type="time" value={editForm.time}
+                  onChange={e=>setEditForm(f=>({...f,time:e.target.value}))} />
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Lieu</label>
+              <select className="form-select" value={editForm.locationChoice || ''}
+                onChange={e => {
+                  const v = e.target.value;
+                  setEditForm(f => ({ ...f, locationChoice: v, location: v === 'autre' ? '' : v }));
+                }}>
+                <option value="">— Choisir —</option>
+                <option value="Grande salle de réunion">Grande salle de réunion</option>
+                <option value="Petite salle de réunion">Petite salle de réunion</option>
+                <option value="autre">Autre…</option>
+              </select>
+              {(editForm.locationChoice === 'autre' || (!editForm.locationChoice && editForm.location)) && (
+                <input className="form-input" style={{ marginTop:6 }} value={editForm.location}
+                  onChange={e=>setEditForm(f=>({...f,location:e.target.value}))}
+                  placeholder="Préciser le lieu…" />
+              )}
+            </div>
+            <div className="form-group">
+              <label className="form-label">Ordre du jour (une ligne par point)</label>
+              <textarea className="form-textarea" rows={4} value={editForm.agenda}
+                onChange={e=>setEditForm(f=>({...f,agenda:e.target.value}))} />
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-ghost" onClick={()=>setShowEdit(null)}>Annuler</button>
+              <button className="btn btn-primary" onClick={async () => {
+                if (!editForm.title?.trim() || !editForm.date || !editForm.time) return;
+                const { updateMeeting } = await import('../api');
+                await updateMeeting(showEdit.id, {
+                  title: editForm.title, date: editForm.date, time: editForm.time,
+                  location: editForm.location, agenda: editForm.agenda.split('\n').filter(Boolean),
+                });
+                setShowEdit(null); await load();
+              }}>Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL : Modifier une réunion ── */}
+      {showEdit && (
+        <div className="modal-overlay">
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div className="modal-title">✏️ Modifier la réunion</div>
+            <div className="form-group">
+              <label className="form-label">Titre *</label>
+              <input className="form-input" autoFocus value={editForm.title}
+                onChange={e=>setEditForm(f=>({...f,title:e.target.value}))} />
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div className="form-group">
+                <label className="form-label">Date *</label>
+                <input className="form-input" type="date" value={editForm.date}
+                  onChange={e=>setEditForm(f=>({...f,date:e.target.value}))} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Heure *</label>
+                <input className="form-input" type="time" value={editForm.time}
+                  onChange={e=>setEditForm(f=>({...f,time:e.target.value}))} />
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Lieu</label>
+              <select className="form-select"
+                value={['Grande salle de réunion','Petite salle de réunion'].includes(editForm.location) ? editForm.location : (editForm.location ? 'autre' : '')}
+                onChange={e => {
+                  const v = e.target.value;
+                  setEditForm(f => ({ ...f, location: v === 'autre' ? '' : v }));
+                }}>
+                <option value="">— Choisir —</option>
+                <option value="Grande salle de réunion">Grande salle de réunion</option>
+                <option value="Petite salle de réunion">Petite salle de réunion</option>
+                <option value="autre">Autre…</option>
+              </select>
+              {!['Grande salle de réunion','Petite salle de réunion',''].includes(editForm.location) && (
+                <input className="form-input" style={{ marginTop:6 }} value={editForm.location}
+                  onChange={e=>setEditForm(f=>({...f,location:e.target.value}))}
+                  placeholder="Préciser le lieu…" />
+              )}
+            </div>
+            <div className="form-group">
+              <label className="form-label">Ordre du jour (une ligne par point)</label>
+              <textarea className="form-textarea" rows={4} value={editForm.agenda}
+                onChange={e=>setEditForm(f=>({...f,agenda:e.target.value}))} />
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-ghost" onClick={()=>setShowEdit(null)}>Annuler</button>
+              <button className="btn btn-primary" onClick={async () => {
+                if (!editForm.title?.trim() || !editForm.date || !editForm.time) return;
+                const { updateMeeting } = await import('../api');
+                await updateMeeting(showEdit.id, {
+                  title: editForm.title, date: editForm.date, time: editForm.time,
+                  location: editForm.location,
+                  agenda: editForm.agenda.split('\n').filter(Boolean),
+                });
+                setShowEdit(null); await load();
+              }}>Enregistrer</button>
             </div>
           </div>
         </div>
@@ -296,7 +436,7 @@ export default function Meetings() {
 
 // ── Composant carte réunion ────────────────────────────────────────────────────
 function MeetingCard({ m, me, myAttendance, myReplacement, myOptions, isTitulaire,
-  attend, attSaving, suppleants, onDelete, isPast }) {
+  attend, attSaving, suppleants, onDelete, onEdit, isPast }) {
 
   const [open, setOpen] = useState(false); // toutes repliées par défaut
 
@@ -540,9 +680,12 @@ function MeetingCard({ m, me, myAttendance, myReplacement, myOptions, isTitulair
             )}
           </div>
 
-          {/* Bouton supprimer */}
-          <div style={{ marginTop:16, display:'flex', justifyContent:'flex-end' }}>
-            <button className="btn btn-danger" style={{ fontSize:11 }} onClick={onDelete}>🗑 Supprimer la réunion</button>
+          {/* Boutons actions */}
+          <div style={{ marginTop:16, display:'flex', justifyContent:'flex-end', gap:8 }}>
+            {!isPast && (
+              <button className="btn btn-ghost" style={{ fontSize:11 }} onClick={onEdit}>✏️ Modifier</button>
+            )}
+            <button className="btn btn-danger" style={{ fontSize:11 }} onClick={onDelete}>🗑 Supprimer</button>
           </div>
         </div>
       )}
