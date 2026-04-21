@@ -683,10 +683,7 @@ function InnerApp() {
               <span className="mobile-nav-label">{p.mobileLabel}</span>
             </button>
           ))}
-          {/* Notifications */}
-          <div className="mobile-nav-item" style={{ position:'relative' }}>
-            <Notifications mobile />
-          </div>
+
           {/* Bouton "Plus" */}
           <button className={`mobile-nav-item ${showMore ? 'active' : ''}`} onClick={() => setShowMore(o => !o)}>
             <div className="mobile-nav-icon" style={{ fontSize:22 }}>
@@ -694,6 +691,10 @@ function InnerApp() {
             </div>
             <span className="mobile-nav-label">Plus</span>
           </button>
+                    {/* Notifications */}
+          <div className="mobile-nav-item" style={{ position:'relative' }}>
+          <Notifications mobile />
+          </div>
         </div>
       </nav>
 
