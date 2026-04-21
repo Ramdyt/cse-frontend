@@ -978,7 +978,7 @@ export default function Delegation() {
                     notify('❌ ' + (e.response?.data?.error || 'Erreur'));
                   } finally { setSaving(false); }
                 }}>
-                {saving ? '…' : 'Appliquer l'ajustement'}
+                {saving ? '…' : 'Appliquer l\'ajustement'}
               </button>
             </div>
           </div>
