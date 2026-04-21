@@ -255,7 +255,7 @@ const css = `
   .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; -webkit-overflow-scrolling: touch; }
   .message { display: flex; gap: 10px; }
   .message.me { flex-direction: row-reverse; }
-  .msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; background: var(--surface2); border: 1px solid var(--border); word-break: break-word; }
+  .msg-bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; background: var(--surface2); border: 1px solid var(--border); word-break: break-word; }
   .message.me .msg-bubble { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; }
   .msg-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
   .message.me .msg-meta { text-align: right; }
