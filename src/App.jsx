@@ -202,7 +202,7 @@ const css = `
 
   /* ─── BOUTONS ───────────────────────────────────────────────────────────── */
   .btn {
-    display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+    align-items: center; gap: 6px; padding: 8px 16px;
     border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer;
     border: none; transition: all 0.15s; font-family: 'DM Sans', sans-serif;
     white-space: nowrap;
