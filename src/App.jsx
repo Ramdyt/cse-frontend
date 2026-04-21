@@ -546,7 +546,7 @@ function InnerApp() {
                 fontFamily:"'DM Sans',sans-serif", transition:'all 0.15s' }}
               onMouseEnter={e => { e.currentTarget.style.color='var(--red)'; e.currentTarget.style.borderColor='var(--red)'; }}
               onMouseLeave={e => { e.currentTarget.style.color='var(--muted)'; e.currentTarget.style.borderColor='var(--border)'; }}>
-              ⏻ Déconnexion
+              ⏻
             </button>
           </div>
         </div>
