@@ -141,7 +141,7 @@ const css = `
   }
   .mobile-nav-item {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 3px; padding: 6px 8px; border-radius: 10px; cursor: pointer;
+    gap: 3px; padding: 10px 7.5px; border-radius: 10px; cursor: pointer;
     border: none; background: none; color: var(--muted);
     font-family: 'DM Sans', sans-serif; transition: all 0.15s;
     flex: 1; min-width: 0;
