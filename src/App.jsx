@@ -411,7 +411,7 @@ const css = `
     .chat-sidebar.mobile-visible { display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: var(--nav-h); width: 240px; z-index: 200; box-shadow: 4px 0 20px rgba(0,0,0,0.4); }
     .chat-main { height: 100%; }
     .chat-messages { padding: 12px; }
-    .msg-bubble { max-width: 85%; }
+    .msg-bubble {  }
     /* Afficher bouton canaux sur mobile */
     .mobile-only { display: flex !important; }
 
