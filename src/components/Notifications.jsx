@@ -208,7 +208,7 @@ export default function Notifications() {
         <div
           style={{
             position: "absolute",
-            top: "-1770%",
+            top: "-1000%",
             width: 340,
             background: "var(--surface)",
             border: "1px solid var(--border)",
