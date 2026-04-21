@@ -136,7 +136,7 @@ const css = `
     padding-bottom: env(safe-area-inset-bottom); /* iPhone notch */
   }
   .mobile-nav-inner {
-    display: contents; align-items: center; justify-content: space-around;
+    display: flex; align-items: center; justify-content: space-around;
     height: 100%;
   }
   .mobile-nav-item {
